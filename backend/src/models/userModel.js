@@ -38,6 +38,9 @@ const User = sequelize.define('users', {
     }
 },{
     timestamps:true,
+    indexes: [
+    { fields: ['email'], unique: true }
+  ]
 });
 
 module.exports = User;

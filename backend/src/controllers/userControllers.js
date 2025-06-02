@@ -1,6 +1,7 @@
 const User = require("../models/userModel");
 const bcrypt = require('bcrypt');
-const { createToken } = require("../utils/validate");
+const { createToken, generateVerificationToken, verifyToken } = require("../utils/validate");
+const { sendEmail } = require("../utils/emailTransporter");
 
 const handleCreateUser = async (req, res) => {
     try {
@@ -23,6 +24,9 @@ const handleCreateUser = async (req, res) => {
             email,
             password: hashedPass
         });
+
+        const token = generateVerificationToken(newUser.id);
+        await sendEmail(email, token);
 
         return res.status(201).json({
             success: true,
@@ -54,6 +58,15 @@ const handleLoginUser = async (req, res) => {
             message: "No User Found!",
         });
 
+        if (!user.isVerified){
+            await sendEmail(email, generateVerificationToken(user.id));
+            return res.status(400).json({
+                success: false,
+                message: "Email Not Verified! Please check your email for verification link.",
+            });
+        }
+
+
         const check = await bcrypt.compare(password, user.password);
 
         if (check) {
@@ -64,8 +77,8 @@ const handleLoginUser = async (req, res) => {
                 sameSite: 'Strict',
                 maxAge: 24 * 60 * 60 * 1000
             });
-            
-            console.log("Token : ",token);
+
+            console.log("Token : ", token);
             return res.status(200).json({
                 success: true,
                 message: "User Logged In Successfully!",
@@ -87,4 +100,42 @@ const handleLoginUser = async (req, res) => {
     }
 };
 
-module.exports = { handleCreateUser, handleLoginUser };
+const handleVerifyEmail = async (req, res) => {
+    try {
+        const { token } = req.query;
+
+        if (!token) return res.status(400).json({
+            success: false,
+            message: "Token is required for email verification.",
+        });
+
+        const {userId} = verifyToken(token);
+        if (!userId) return res.status(400).json({
+            success: false,
+            message: "Invalid or expired token.",
+        });
+
+        const user = await User.findByPk(userId);
+        if (!user) return res.status(404).json({
+            success: false,
+            message: "User not found.",
+        });
+
+        user.isVerified = true;
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Email verified successfully!",
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error
+        })
+        console.error(error);
+    }
+};
+
+module.exports = { handleCreateUser, handleLoginUser, handleVerifyEmail };

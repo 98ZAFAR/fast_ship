@@ -17,4 +17,10 @@ const verifyToken = (token)=>{
     return jwt.verify(token, process.env.JWT_SECRET);
 };
 
-module.exports = {createToken, verifyToken};
+const generateVerificationToken = (userId) => {
+    const payload = { userId };
+    const verificationToken = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
+    return verificationToken;
+}
+
+module.exports = {createToken, verifyToken, generateVerificationToken};
