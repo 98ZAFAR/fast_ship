@@ -48,6 +48,10 @@ const SellerProfile = sequelize.define(
         isUrl: true,
       },
     },
+    businessType: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
   },
   {
     timestamps: true, // Automatically manage createdAt and updatedAt fields

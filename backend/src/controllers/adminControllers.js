@@ -1,4 +1,5 @@
 const SellerApplication = require("../models/sellerApplicationModel");
+const SellerProfile = require("../models/sellerProfileModel");
 const User = require("../models/userModel");
 const { sendApprovalEmail } = require("../utils/emailTransporter");
 
@@ -37,7 +38,7 @@ const handleApproveSellerApplication = async (req, res) => {
     sellerApplication.applicationStatus = "approved";
     await sellerApplication.save();
 
-    const sellerProfile = await SellerApplication.create({
+    const sellerProfile = await SellerProfile.create({
       userId: sellerId,
       businessName: sellerApplication.businessName,
       businessAddress: sellerApplication.businessAddress,
