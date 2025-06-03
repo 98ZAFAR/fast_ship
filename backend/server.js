@@ -6,6 +6,8 @@ const cookieParser = require("cookie-parser");
 
 const userRoutes = require("./src/routes/userRoutes");
 const productRoutes = require("./src/routes/productRoutes");
+const sellerRoutes = require("./src/routes/sellerRoutes");
+const adminRoutes = require("./src/routes/adminRoutes");
 
 require('./src/models/associations');
 
@@ -17,6 +19,8 @@ app.use(cookieParser());
 
 app.use("/api/auth", userRoutes);
 app.use("/api/products", productRoutes);
+app.use("/api/sellers", sellerRoutes);
+app.use("/api/admin", adminRoutes);
 
 sequelize
   .sync({})

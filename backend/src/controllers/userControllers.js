@@ -5,7 +5,7 @@ const {
   generateVerificationToken,
   verifyToken,
 } = require("../utils/validate");
-const { sendEmail } = require("../utils/emailTransporter");
+const { sendVerificationEmail } = require("../utils/emailTransporter");
 
 const handleCreateUser = async (req, res) => {
   try {
@@ -32,7 +32,7 @@ const handleCreateUser = async (req, res) => {
     });
 
     const token = generateVerificationToken(newUser.id);
-    await sendEmail(email, token);
+    await sendVerificationEmail(email, token);
 
     return res.status(201).json({
       success: true,
@@ -67,7 +67,7 @@ const handleLoginUser = async (req, res) => {
       });
 
     if (!user.isVerified) {
-      await sendEmail(email, generateVerificationToken(user.id));
+      await sendVerificationEmail(email, generateVerificationToken(user.id));
       return res.status(400).json({
         success: false,
         message:
@@ -90,6 +90,15 @@ const handleLoginUser = async (req, res) => {
       return res.status(200).json({
         success: true,
         message: "User Logged In Successfully!",
+        data: {
+          user: {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            profileURL: user.profileURL,
+            role: user.role,
+          },
+        },
       });
     } else {
       return res.status(401).json({

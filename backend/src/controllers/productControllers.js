@@ -134,7 +134,14 @@ const handleDeleteProduct = async(req, res) => {
         const productId = req.params.id;
 
         const product = await Product.findByPk(productId);
-
+        if(req.user.role==='seller') {
+            if(product.sellerId !== req.user.id) {
+                return res.status(403).json({
+                    success: false,
+                    message: "You are not authorized to delete this product!"
+                });
+            }
+        }
         if (!product) {
             return res.status(404).json({
                 success: false,

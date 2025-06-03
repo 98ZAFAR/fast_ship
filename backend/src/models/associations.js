@@ -1,5 +1,7 @@
 const CartItem = require("./cartItemModel");
 const Product = require("./productModel");
+const SellerApplication = require("./sellerApplicationModel");
+const SellerProfile = require("./sellerProfileModel");
 const User = require("./userModel");
 
 User.hasMany(Product, {
@@ -30,4 +32,24 @@ Product.hasMany(CartItem, {
 CartItem.belongsTo(Product, {
   foreignKey: "productId",
   as: "product",
+});
+
+User.hasOne(SellerApplication, {
+  foreignKey: "userId",
+  as: "sellerApplication",
+  onDelete: "CASCADE",
+});
+SellerApplication.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
+});
+
+User.hasOne(SellerProfile, {
+  foreignKey: "userId",
+  as: "sellerProfile",
+  onDelete: "CASCADE",
+});
+SellerProfile.belongsTo(User, {
+  foreignKey: "userId",
+  as: "user",
 });
