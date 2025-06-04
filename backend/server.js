@@ -8,6 +8,7 @@ const userRoutes = require("./src/routes/userRoutes");
 const productRoutes = require("./src/routes/productRoutes");
 const sellerRoutes = require("./src/routes/sellerRoutes");
 const adminRoutes = require("./src/routes/adminRoutes");
+const cartRoutes = require("./src/routes/cartRoutes");
 
 require('./src/models/associations');
 
@@ -21,6 +22,7 @@ app.use("/api/auth", userRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/sellers", sellerRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/cart", cartRoutes);
 
 sequelize
   .sync({})

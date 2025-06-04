@@ -1,8 +1,8 @@
 const {DataTypes} = require("sequelize");
 const sequelize = require("../../configs/dbConfig");
 
-const CartItem = sequelize.define(
-  "cartItem",
+const Cart = sequelize.define(
+  "cart",
   {
     id: {
       type: DataTypes.UUID,
@@ -10,21 +10,14 @@ const CartItem = sequelize.define(
       allowNull: false,
       primaryKey: true,
     },
-    cartId: {
+    userId: {
       type: DataTypes.UUID,
       allowNull: false,
     },
-    productId: {
-      type: DataTypes.UUID,
+    totalPrice: {
+      type: DataTypes.FLOAT,
       allowNull: false,
-    },
-    quantity: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      defaultValue: 1,
-      validate: {
-        min: 1,
-      },
+      defaultValue: 0.0,
     },
   },
   {
@@ -32,4 +25,4 @@ const CartItem = sequelize.define(
   }
 );
 
-module.exports = CartItem;
+module.exports = Cart;
